@@ -6,59 +6,130 @@ import ImageConverter from "./components/ImageConverter";
 import ImageToPDF from "./components/ImageToPDF";
 import PdfToImage from "./components/PdfToImage";
 import PdfToWord from "./components/PdfToWord";
-
-
-
-
-
+import "./App.css";
 
 function App() {
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedTool, setSelectedTool] = useState("");
   const [imageFile, setImageFile] = useState(null);
 
   const handleImageSelect = (file) => {
     setImageFile(file);
-    console.log("Image selected:", file);
+  };
+
+  const handleToolChange = (category, tool) => {
+    setSelectedCategory(category);
+    setSelectedTool(tool);
+    setImageFile(null); // reset file when switching tools
+  };
+
+  const renderTool = () => {
+    if (selectedCategory === "Image") {
+      switch (selectedTool) {
+        case "compress":
+          return (
+            <>
+              <ImageUpload onImageSelect={handleImageSelect} />
+              {imageFile && <ImageCompressor imageFile={imageFile} />}
+            </>
+          );
+        case "resize":
+          return (
+            <>
+              <ImageUpload onImageSelect={handleImageSelect} />
+              {imageFile && <ImageResizer imageFile={imageFile} />}
+            </>
+          );
+        case "convert":
+          return (
+            <>
+              <ImageUpload onImageSelect={handleImageSelect} />
+              {imageFile && <ImageConverter imageFile={imageFile} />}
+            </>
+          );
+        case "img2pdf":
+          return (
+            <>
+              <ImageUpload onImageSelect={handleImageSelect} />
+              {imageFile && <ImageToPDF imageFile={imageFile} />}
+            </>
+          );
+        default:
+          return <p className="info-text">Select a tool from Image Tools</p>;
+      }
+    }
+
+    if (selectedCategory === "PDF") {
+      switch (selectedTool) {
+        case "pdf2img":
+          return <PdfToImage />;
+        case "pdf2docx":
+          return <PdfToWord />;
+        default:
+          return <p className="info-text">Select a tool from PDF Tools</p>;
+      }
+    }
+
+    return <p className="info-text">Please select a category</p>;
   };
 
   return (
-    <div>
-      <h1 style={styles.heading}>🖼️ Image Converter Tool</h1>
-      <ImageUpload onImageSelect={handleImageSelect} />
-      {imageFile && <ImageCompressor imageFile={imageFile} />}
-      {imageFile && <ImageResizer imageFile={imageFile} />}
-      {imageFile && <ImageConverter imageFile={imageFile} />}
-      {imageFile && <ImageToPDF imageFile={imageFile} />}      
-      {imageFile && (
-        <div style={styles.previewBox}>
-          <p>File: {imageFile.name}</p>
-          <img
-            src={URL.createObjectURL(imageFile)}
-            alt="Preview"
-            style={{ maxWidth: "300px", maxHeight: "300px" }}
-          />
-        </div>
-      )}
-      
-      <hr />
-      <h2 style={{ textAlign: "center", marginTop: "30px" }}>📚 PDF Tools</h2>
-      <PdfToImage />
-      <PdfToWord />
+    <div className="app-container">
+      <div className="ad-banner">[Google AdSense Unit]</div>
 
+      <h1 className="app-title">🧰 All-in-One File Toolkit</h1>
+
+      {/* Dropdown Section */}
+      <div className="dropdown-section">
+        <div className="dropdown">
+          <button className="dropbtn">🖼️ Image Tools</button>
+          <div className="dropdown-content">
+            <button onClick={() => handleToolChange("Image", "compress")}>
+              Compress Image
+            </button>
+            <button onClick={() => handleToolChange("Image", "resize")}>
+              Resize Image
+            </button>
+            <button onClick={() => handleToolChange("Image", "convert")}>
+              Convert Image
+            </button>
+            <button onClick={() => handleToolChange("Image", "img2pdf")}>
+              Image to PDF
+            </button>
+          </div>
+        </div>
+
+        <div className="dropdown">
+          <button className="dropbtn">📚 PDF Tools</button>
+          <div className="dropdown-content">
+            <button onClick={() => handleToolChange("PDF", "pdf2img")}>
+              PDF to Image
+            </button>
+            <button onClick={() => handleToolChange("PDF", "pdf2docx")}>
+              PDF to Word
+            </button>
+          </div>
+        </div>
+
+        <div className="dropdown">
+          <button className="dropbtn">🎧 Audio Tools</button>
+          <div className="dropdown-content">
+            <button disabled>Coming Soon</button>
+          </div>
+        </div>
+
+        <div className="dropdown">
+          <button className="dropbtn">🎬 Video Tools</button>
+          <div className="dropdown-content">
+            <button disabled>Coming Soon</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tool Display Area */}
+      <div className="tool-section">{renderTool()}</div>
     </div>
   );
 }
-
-const styles = {
-  heading: {
-    textAlign: "center",
-    padding: "20px",
-    fontSize: "24px",
-    color: "#333",
-  },
-  previewBox: {
-    textAlign: "center",
-    marginTop: "20px",
-  },
-};
 
 export default App;

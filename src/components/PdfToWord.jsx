@@ -13,7 +13,8 @@ function PdfToWord() {
 
     setLoading(true);
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", selectedFile);
+  
 
     try {
       const response = await fetch("https://pdf2docx-api.onrender.com/convert-ocr", {
