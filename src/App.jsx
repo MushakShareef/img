@@ -11,6 +11,7 @@ import VideoFormatConverter from "./components/VideoFormatConverter"; // 👈 Ne
 import AudioFormatConverter from "./components/AudioFormatConverter";
 import AudioCompressor from "./components/AudioCompressor";
 import AudioExtractor from "./components/AudioExtractor";
+import QRCodeGenerator from "./components/QRCodeGenerator";
 
 import "./App.css";
 
@@ -103,6 +104,15 @@ function App() {
       }
     }
 
+    if (selectedCategory === "QR") {
+      switch (selectedTool) {
+      case "qrcode":
+        return <QRCodeGenerator />;
+      default:
+        return <p className="info-text">Select a tool from QR Tools</p>;
+      }
+    }
+
 
 
     return <p className="info-text">Please select a category</p>;
@@ -171,9 +181,18 @@ function App() {
           <button onClick={() => handleToolChange("Video", "convert")}>
             Convert Format
           </button>
-
           </div>
         </div>
+
+        <div className="dropdown">
+          <button className="dropbtn">🧾 QR Tools</button>
+          <div className="dropdown-content">
+            <button onClick={() => handleToolChange("QR", "qrcode")}>
+              QR Code Generator
+            </button>
+          </div>
+        </div>
+
 
       </div>
 
