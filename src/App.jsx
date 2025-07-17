@@ -62,6 +62,7 @@ function App() {
             </>
           );
         default:
+          
           return <p className="info-text">Select a tool from Image Tools</p>;
       }
     }
@@ -115,7 +116,13 @@ function App() {
 
 
 
-    return <p className="info-text">Please select a category</p>;
+    return (
+        <div className="welcome-box">
+          <h2>Welcome to Ameer’s Board</h2>
+          <p>Where Tools Work for You</p>
+          <p>Select a category from above to get started.</p>
+        </div>
+      );
   };
 
   return (
