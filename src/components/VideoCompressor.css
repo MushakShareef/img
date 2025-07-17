@@ -1,0 +1,45 @@
+/* components/VideoCompressor.css */
+.video-tool-container {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: auto;
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+.label {
+  display: block;
+  margin-top: 15px;
+  font-size: 1rem;
+}
+
+.input,
+.select,
+.button {
+  display: block;
+  margin-top: 5px;
+  padding: 10px;
+  width: 100%;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+}
+
+.button {
+  background-color: #00adb5;
+  color: #fff;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #007f86;
+}
+
+.info {
+  margin-top: 15px;
+  font-size: 0.95rem;
+  color: #b3e5fc;
+}

@@ -6,6 +6,8 @@ import ImageConverter from "./components/ImageConverter";
 import ImageToPDF from "./components/ImageToPDF";
 import PdfToImage from "./components/PdfToImage";
 import PdfToWord from "./components/PdfToWord";
+import VideoCompressor from "./components/VideoCompressor";
+
 import "./App.css";
 
 function App() {
@@ -70,6 +72,15 @@ function App() {
       }
     }
 
+    if (selectedCategory === "Video") {
+      switch (selectedTool) {
+      case "compress":
+        return <VideoCompressor />;
+      default:
+      return <p className="info-text">Select a tool from Video Tools</p>;
+     }
+    }
+
     return <p className="info-text">Please select a category</p>;
   };
 
@@ -121,9 +132,12 @@ function App() {
         <div className="dropdown">
           <button className="dropbtn">🎬 Video Tools</button>
           <div className="dropdown-content">
-            <button disabled>Coming Soon</button>
+          <button onClick={() => handleToolChange("Video", "compress")}>
+          Compress Video
+          </button>
           </div>
         </div>
+
       </div>
 
       {/* Tool Display Area */}
