@@ -7,6 +7,10 @@ import ImageToPDF from "./components/ImageToPDF";
 import PdfToImage from "./components/PdfToImage";
 import PdfToWord from "./components/PdfToWord";
 import VideoCompressor from "./components/VideoCompressor";
+import VideoFormatConverter from "./components/VideoFormatConverter"; // 👈 New
+import AudioFormatConverter from "./components/AudioFormatConverter";
+import AudioCompressor from "./components/AudioCompressor";
+import AudioExtractor from "./components/AudioExtractor";
 
 import "./App.css";
 
@@ -76,10 +80,30 @@ function App() {
       switch (selectedTool) {
       case "compress":
         return <VideoCompressor />;
+      case "convert":
+        return <VideoFormatConverter />;
       default:
-      return <p className="info-text">Select a tool from Video Tools</p>;
+        return <p className="info-text">Select a tool from Video Tools</p>;
+      
+
      }
     }
+
+    if (selectedCategory === "Audio") {
+      switch (selectedTool) {
+      case "convert":
+          return <AudioFormatConverter />;
+      case "compress":
+          return <AudioCompressor />;
+      case "extract":
+          return <AudioExtractor />;
+
+      default:
+          return <p className="info-text">Select a tool from Audio Tools</p>;
+      }
+    }
+
+
 
     return <p className="info-text">Please select a category</p>;
   };
@@ -125,7 +149,16 @@ function App() {
         <div className="dropdown">
           <button className="dropbtn">🎧 Audio Tools</button>
           <div className="dropdown-content">
-            <button disabled>Coming Soon</button>
+            <button onClick={() => handleToolChange("Audio", "convert")}>
+              Convert Audio Format
+            </button>
+            <button onClick={() => handleToolChange("Audio", "compress")}>
+              Compress Audio
+            </button>
+            <button onClick={() => handleToolChange("Audio", "extract")}>
+              Extract Audio from Video
+            </button>
+
           </div>
         </div>
 
@@ -135,6 +168,10 @@ function App() {
           <button onClick={() => handleToolChange("Video", "compress")}>
           Compress Video
           </button>
+          <button onClick={() => handleToolChange("Video", "convert")}>
+            Convert Format
+          </button>
+
           </div>
         </div>
 

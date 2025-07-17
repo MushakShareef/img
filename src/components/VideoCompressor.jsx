@@ -1,22 +1,38 @@
 // components/VideoCompressor.jsx
 import React, { useState } from "react";
 import ffmpegModule from "@ffmpeg/ffmpeg";
-const { createFFmpeg, fetchFile } = ffmpegModule;
 import "./VideoCompressor.css";
 
-const ffmpeg = createFFmpeg({ log: true });
+const { createFFmpeg, fetchFile } = ffmpegModule;
+const ffmpeg = createFFmpeg({
+  log: true,
+  progress: (p) => {
+    if (p?.ratio) {
+      setProgress(Math.round(p.ratio * 100));
+    }
+  },
+});
+
+let setProgress; // We'll hook this below
 
 const VideoCompressor = () => {
   const [videoFile, setVideoFile] = useState(null);
   const [compressionLevel, setCompressionLevel] = useState("medium");
+  const [resolution, setResolution] = useState("original");
   const [outputUrl, setOutputUrl] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [progressText, setProgressText] = useState("");
+  const [progressValue, setProgressValue] = useState(0);
+  const [originalSize, setOriginalSize] = useState(0);
+  const [outputSize, setOutputSize] = useState(0);
+
+  setProgress = setProgressValue; // Link FFmpeg progress to state updater
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("video/")) {
       setVideoFile(file);
+      setOriginalSize(file.size);
       setOutputUrl("");
     } else {
       alert("Please upload a valid video file.");
@@ -25,6 +41,10 @@ const VideoCompressor = () => {
 
   const handleCompressionChange = (e) => {
     setCompressionLevel(e.target.value);
+  };
+
+  const handleResolutionChange = (e) => {
+    setResolution(e.target.value);
   };
 
   const handleSubmit = async (e) => {
@@ -36,6 +56,7 @@ const VideoCompressor = () => {
     }
 
     setIsProcessing(true);
+    setProgressValue(0);
     setProgressText("Loading FFmpeg...");
 
     if (!ffmpeg.isLoaded()) {
@@ -44,30 +65,29 @@ const VideoCompressor = () => {
 
     const inputName = "input.mp4";
     const outputName = "output.mp4";
+
     ffmpeg.FS("writeFile", inputName, await fetchFile(videoFile));
 
-    // Define compression presets
-    let crf = "28"; // default
+    let crf = "28";
     if (compressionLevel === "low") crf = "35";
-    else if (compressionLevel === "medium") crf = "28";
     else if (compressionLevel === "high") crf = "23";
 
+    const args = ["-i", inputName, "-vcodec", "libx264", "-crf", crf];
+
+    if (resolution !== "original") {
+      const [w, h] = resolution.split("x");
+      args.push("-vf", `scale=${w}:${h}`);
+    }
+
+    args.push(outputName);
+
     setProgressText("Compressing video...");
-
-    await ffmpeg.run(
-      "-i",
-      inputName,
-      "-vcodec",
-      "libx264",
-      "-crf",
-      crf,
-      outputName
-    );
-
-    setProgressText("Reading output file...");
+    await ffmpeg.run(...args);
 
     const data = ffmpeg.FS("readFile", outputName);
-    const url = URL.createObjectURL(new Blob([data.buffer], { type: "video/mp4" }));
+    const blob = new Blob([data.buffer], { type: "video/mp4" });
+    setOutputSize(blob.size);
+    const url = URL.createObjectURL(blob);
 
     setOutputUrl(url);
     setIsProcessing(false);
@@ -76,43 +96,58 @@ const VideoCompressor = () => {
 
   return (
     <div className="video-tool-container">
-      <h2>🎬 Video Compressor</h2>
+      <h2>🎬 Video Compressor + Resizer</h2>
 
       <form onSubmit={handleSubmit}>
         <label className="label">
           Select Video File:
-          <input
-            type="file"
-            accept="video/*"
-            onChange={handleFileChange}
-            className="input"
-          />
+          <input type="file" accept="video/*" onChange={handleFileChange} className="input" />
         </label>
 
         <label className="label">
           Compression Level:
-          <select
-            value={compressionLevel}
-            onChange={handleCompressionChange}
-            className="select"
-          >
-            <option value="low">Low (Smallest size)</option>
-            <option value="medium">Medium (Balanced)</option>
-            <option value="high">High (Better quality)</option>
+          <select value={compressionLevel} onChange={handleCompressionChange} className="select">
+            <option value="low">Low (smallest size)</option>
+            <option value="medium">Medium (balanced)</option>
+            <option value="high">High (better quality)</option>
+          </select>
+        </label>
+
+        <label className="label">
+          Output Resolution:
+          <select value={resolution} onChange={handleResolutionChange} className="select">
+            <option value="original">Keep original</option>
+            <option value="1920x1080">1920 x 1080 (Full HD)</option>
+            <option value="1280x720">1280 x 720 (HD)</option>
+            <option value="854x480">854 x 480 (SD)</option>
+            <option value="640x360">640 x 360 (Mobile)</option>
           </select>
         </label>
 
         <button type="submit" className="button" disabled={isProcessing}>
-          {isProcessing ? "Processing..." : "Compress Video"}
+          {isProcessing ? "Processing..." : "Compress + Resize"}
         </button>
       </form>
 
-      {isProcessing && <p className="info">{progressText}</p>}
+      {isProcessing && (
+        <>
+          <p className="info">{progressText}</p>
+          <div className="progress-bar">
+            <div className="progress" style={{ width: `${progressValue}%` }}></div>
+          </div>
+          <p className="info">Progress: {progressValue}%</p>
+        </>
+      )}
 
       {outputUrl && (
         <div className="download-section">
-          <p>✅ Compression done!</p>
+          <p>✅ Done!</p>
           <video src={outputUrl} controls width="100%" />
+          <p>
+            📁 Original size: {(originalSize / (1024 * 1024)).toFixed(2)} MB
+            <br />
+            📉 Compressed size: {(outputSize / (1024 * 1024)).toFixed(2)} MB
+          </p>
           <a href={outputUrl} download="compressed_video.mp4" className="button">
             Download Compressed Video
           </a>
