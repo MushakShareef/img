@@ -42,20 +42,52 @@
 }
 .welcome-box {
   text-align: center;
-  padding: 60px 20px;
+  padding: 30px 15px; /* mobile-first smaller padding */
   background-color: #1e293b;
   color: #f1f5f9;
   border-radius: 16px;
-  margin-top: 40px;
+  margin-top: 20px;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
 }
 
 .welcome-box h2 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
+  font-size: 1.8rem; /* mobile-first */
+  margin-bottom: 8px;
 }
 
 .welcome-box p {
-  font-size: 1.2rem;
+  font-size: 1rem; /* mobile-first */
   color: #cbd5e1;
+}
+
+/* Tablet and up */
+@media (min-width: 600px) {
+  .welcome-box {
+    padding: 50px 25px;
+    margin-top: 30px;
+  }
+
+  .welcome-box h2 {
+    font-size: 2.2rem;
+  }
+
+  .welcome-box p {
+    font-size: 1.1rem;
+  }
+}
+
+/* Desktop and up */
+@media (min-width: 1024px) {
+  .welcome-box {
+    padding: 60px 40px;
+    margin-top: 40px;
+  }
+
+  .welcome-box h2 {
+    font-size: 2.5rem;
+  }
+
+  .welcome-box p {
+    font-size: 1.2rem;
+  }
 }
