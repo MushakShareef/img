@@ -13,7 +13,7 @@ function PdfToWord() {
 
     setLoading(true);
     const formData = new FormData();
-    formData.append("file", selectedFile);
+    formData.append("file", file);
   
 
     try {
