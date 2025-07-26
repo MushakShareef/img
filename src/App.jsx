@@ -12,6 +12,7 @@ import AudioFormatConverter from "./components/AudioFormatConverter";
 import AudioCompressor from "./components/AudioCompressor";
 import AudioExtractor from "./components/AudioExtractor";
 import QRCodeGenerator from "./components/QRCodeGenerator";
+import PdfToExcel from "./components/PdfToExcel";
 
 import "./App.css";
 
@@ -73,6 +74,8 @@ function App() {
           return <PdfToImage />;
         case "pdf2docx":
           return <PdfToWord />;
+        case "pdf2excel":
+          return <PdfToExcel />;
         default:
           return <p className="info-text">Select a tool from PDF Tools</p>;
       }
@@ -148,6 +151,7 @@ function App() {
             <button onClick={() => handleToolChange("Image", "img2pdf")}>
               Image to PDF
             </button>
+            
           </div>
         </div>
 
@@ -159,6 +163,9 @@ function App() {
             </button>
             <button onClick={() => handleToolChange("PDF", "pdf2docx")}>
               PDF to Word
+            </button>
+            <button onClick={() => handleToolChange("PDF", "pdf2excel")}>
+              PDF to Excel
             </button>
           </div>
         </div>
