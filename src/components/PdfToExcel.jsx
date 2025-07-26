@@ -16,7 +16,7 @@ function PdfToExcel() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:8000/convert-excel", {
+      const response = await fetch("https://pdf2docx-api.onrender.com/convert-excel", {
         method: "POST",
         body: formData,
       });
